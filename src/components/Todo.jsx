@@ -1,44 +1,73 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Todo() {
     const [task, setTask] = useState("");
     const [list, setList] = useState([]);
 
+    useEffect(() => {
+        const storedTasks = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            storedTasks.push(localStorage.getItem(i));
+        }
+        setList(storedTasks);
+    }, []);
+
     function addTaskToList(){
-        if (task.trim() !== "")
-            setList(l => [...l, task]);
-        
-        setTask("");
+        if (task.trim() !== "") {
+            setList(l => {
+                const updatedList = [...l, task];
+                updatedList.forEach((element, index) => {
+                    localStorage.setItem(index, element);
+                });
+                return updatedList; 
+            });
+            setTask("");
+        }
     }
 
     function moveTaskUp(index){
-        if (index === 0) 
-            return;
+        if (index === 0) return;
 
         setList(l => {
             const newList = [...l];
             [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
+
+            newList.forEach((element, index) => {
+                localStorage.setItem(index, element);
+            });
+
             return newList;
         });
     }
 
     function moveTaskDown(index){
-        if (index === list.length - 1) 
-            return;
+        if (index === list.length - 1) return;
         
         setList(l => {
             const newList = [...l];
             [newList[index + 1], newList[index]] = [newList[index], newList[index + 1]];
+
+            newList.forEach((element, index) => {
+                localStorage.setItem(index, element);
+            });
+
             return newList;
         });
     }
 
     function deleteTask(index){
-        setList(l => l.filter((_, i) => i !== index));
+        setList(l => {
+            const newList = l.filter((_, i) => i !== index);
+            newList.forEach((element, i) => {
+                localStorage.setItem(i, element);
+            });
+            localStorage.removeItem(newList.length);
+            return newList; 
+        });
     }
 
     function handleKeyPress(event){
-        if (event.key === "Enter")
+        if (event.key === "Enter") 
             addTaskToList();
     }
 
@@ -62,22 +91,22 @@ function Todo() {
 
             <ol className="list-none">
                 {list.map((eachTask, index) => (
-                    <li key={index} className="h-[39px] min-w-72 px-2 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center">
+                    <li key={index} className="h-auto w-72 px-3 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center">
                         <span className="flex-grow">{eachTask}</span>
                         <button 
-                            className="mx-1 px-2 bg-blue-500 text-white rounded"
+                            className="mx-1 px-2 text-white rounded"
                             onClick={() => moveTaskUp(index)}
                         >
                             ⬆️
                         </button>
                         <button 
-                            className="mx-1 px-2 bg-blue-500 text-white rounded"
+                            className="mx-1 px-2 text-white rounded"
                             onClick={() => moveTaskDown(index)}
                         >
                             ⬇️
                         </button>
                         <button 
-                            className="mx-1 px-2 bg-red-500 text-white rounded"
+                            className="mx-1 px-2 text-white rounded"
                             onClick={() => deleteTask(index)}
                         >
                             ❌
