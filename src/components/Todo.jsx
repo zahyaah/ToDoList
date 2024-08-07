@@ -1,108 +1,92 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
 
 function Todo() {
     const [task, setTask] = useState("");
     const [list, setList] = useState([]);
-    const [listIndex, setListIndex] = useState(undefined);
 
-    const handleTaskChange = (e) => {
-        setTask(e.target.value);
-    }
-
-    const clearFields = () => {
-        if (task === "" || task === undefined)
-            return;
-        setList((l) => [...l, task]);
+    function addTaskToList(){
+        if (task.trim() !== "")
+            setList(l => [...l, task]);
+        
         setTask("");
     }
 
-    const handleDeleteTask = (index) => {
-        setList((l) => l.filter(element => l.indexOf(element) !== index))
+    function moveTaskUp(index){
+        if (index === 0) 
+            return;
+
+        setList(l => {
+            const newList = [...l];
+            [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
+            return newList;
+        });
     }
 
-    const listVariants = {
-        initial: {
-            y: "-100vh"
-        }, 
-        final: {
-            y: 0,
-            transition: {
-                delay: 0.5, 
-                duration: 0.5
-            }
-        }
+    function moveTaskDown(index){
+        if (index === list.length - 1) 
+            return;
+        
+        setList(l => {
+            const newList = [...l];
+            [newList[index + 1], newList[index]] = [newList[index], newList[index + 1]];
+            return newList;
+        });
     }
 
-    const buttonVariants = {
-        initial: {
-            opacity: 0
-        }, 
-        final: {
-            opacity: 1,
-            transition: {
-                duration: 3
-            }
-        }
+    function deleteTask(index){
+        setList(l => l.filter((_, i) => i !== index));
     }
 
-    useEffect(() => {
-        if (listIndex !== undefined) {
-            setList((l) => l.filter((_, index) => index !== listIndex))
-        }
-    }, [listIndex]);
-
+    function handleKeyPress(event){
+        if (event.key === "Enter")
+            addTaskToList();
+    }
 
     return (
-        <>
-            <div className="flex flex-col justify-center items-center">
-                <input type="text" onChange={(e)=> handleTaskChange(e)} placeholder="Enter Task" value={task} className="border-[#5F6F65] border-2 p-3 h-15 w-80 m-3" />
-                <button type="submit" onClick={clearFields} className="h-12 w-80 border-[#5F6F65] border-2 text-center hover:bg-[#808D7C] hover:text-white">Submit</button>
-                <ul className="list-none">
-                    { list.length !== 0 && 
-                        list.map((item, index) => {
-                            return (
-                                <div key={index} className="flex justify-center items-center">
-                                        <motion.li key={index}
-                                            variants={listVariants}
-                                            initial="initial"
-                                            animate="final"
-                                            className="border-[2px] border-greenish p-3 m-4 bg-[#808D7C] rounded-md w-80 h-auto"
-                                            > { item } 
-                                        </motion.li>
-                                        <motion.button className="bg-rose-600 hover:bg-rose-700 h-[45px] text-white font-bold px-3 py-1 my-4  mx-1 rounded" 
-                                            variants={buttonVariants} 
-                                            initial="initial" 
-                                            animate="final"
-                                            id="complete"
-                                            onClick={() => handleDeleteTask(index)}
-                                            >
-                                                Completed
-                                        </motion.button>
-                                        <motion.button className="bg-blue-500 hover:bg-blue-700 h-[45px] text-white font-bold px-3 py-1 my-4 mx-1 rounded"
-                                            variants={buttonVariants} 
-                                            initial="initial" 
-                                            animate="final"
-                                            id="up"
-                                            >
-                                            ⬆️
-                                        </motion.button>
-                                        <motion.button className="bg-blue-500 hover:bg-blue-700 h-[45px] text-white font-bold px-3 py-1 my-4 mx-1 rounded"
-                                            variants={buttonVariants} 
-                                            initial="initial" 
-                                            animate="final"
-                                            id="down"
-                                            >
-                                            ⬇️
-                                        </motion.button>
-                                </div>
-                            )
-                        })
-                    }
-                </ul>
+        <div className="flex flex-col items-center">
+            <div className="flex justify-center items-center flex-wrap mb-4">
+                <input 
+                    className="h-[32px] min-w-72 p-2 mx-2 mb-1 rounded-md bg-[#F1F8E8]" 
+                    placeholder="enter task" 
+                    value={task}
+                    onChange={(e) => setTask(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                />
+                <button 
+                    className="h-[32px] min-w-72 px-2 border-[#B0C7A5] border-2 rounded-md bg-[#F1F8E8] hover:bg-[#B0C7A5]"
+                    onClick={addTaskToList}
+                >
+                    add task
+                </button>
             </div>
-        </>
-    )
+
+            <ol className="list-none">
+                {list.map((eachTask, index) => (
+                    <li key={index} className="h-[39px] min-w-72 px-2 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center">
+                        <span className="flex-grow">{eachTask}</span>
+                        <button 
+                            className="mx-1 px-2 bg-blue-500 text-white rounded"
+                            onClick={() => moveTaskUp(index)}
+                        >
+                            ⬆️
+                        </button>
+                        <button 
+                            className="mx-1 px-2 bg-blue-500 text-white rounded"
+                            onClick={() => moveTaskDown(index)}
+                        >
+                            ⬇️
+                        </button>
+                        <button 
+                            className="mx-1 px-2 bg-red-500 text-white rounded"
+                            onClick={() => deleteTask(index)}
+                        >
+                            ❌
+                        </button>
+                    </li>
+                ))}
+            </ol>
+        </div>
+    );
 }
 
-export default Todo; 
+export default Todo;
