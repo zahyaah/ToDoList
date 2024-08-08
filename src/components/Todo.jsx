@@ -79,14 +79,14 @@ function Todo() {
         <div className="flex flex-col items-center">
             <div className="flex justify-center items-center flex-wrap mb-4">
                 <input 
-                    className="h-[32px] min-w-72 p-2 mx-2 mb-1 rounded-md bg-[#F1F8E8]" 
+                    className="h-[38px] w-80 p-2 mx-2 mb-1 rounded-md bg-[#F1F8E8]" 
                     placeholder="enter task" 
                     value={task}
                     onChange={(e) => setTask(e.target.value)}
                     onKeyPress={handleKeyPress}
                 />
                 <button 
-                    className="h-[32px] min-w-72 px-2 border-[#B0C7A5] border-2 rounded-md bg-[#F1F8E8] hover:bg-[#B0C7A5]"
+                    className="h-[40px] w-80 border-[#B0C7A5] border-2 rounded-md bg-[#F1F8E8] hover:bg-[#B0C7A5] flex items-center justify-center mx-2 mb-1"
                     onClick={addTaskToList}
                 >
                     add task
@@ -96,11 +96,13 @@ function Todo() {
             <ol className="list-none">
                 {list.map((eachTask, index) => (
                     <motion.li key={index} 
-                               className="h-auto w-72 px-3 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center"
+                               className="h-auto w-80 px-3 py-3 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center"
                                variants={listVariants} 
                                initial="initial"
                                animate="final">
+
                         <span className="flex-grow">{eachTask}</span>
+
                         <motion.button 
                             className="mx-1 px-2 text-white rounded"
                             onClick={() => moveTaskUp(index)}
@@ -110,6 +112,7 @@ function Todo() {
                         >
                             ⬆️
                         </motion.button>
+
                         <motion.button 
                             className="mx-1 px-2 text-white rounded"
                             onClick={() => moveTaskDown(index)}
@@ -119,6 +122,7 @@ function Todo() {
                         >
                             ⬇️
                         </motion.button>
+                        
                         <motion.button 
                             className="mx-1 px-2 text-white rounded"
                             onClick={() => deleteTask(index)}
