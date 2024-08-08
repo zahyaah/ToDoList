@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import listVariants from "../animation/ListVariants.js"; 
+import buttonVariants from "../animation/ButtonVariants.js";
 
 function Todo() {
     const [task, setTask] = useState("");
@@ -71,6 +74,7 @@ function Todo() {
             addTaskToList();
     }
 
+
     return (
         <div className="flex flex-col items-center">
             <div className="flex justify-center items-center flex-wrap mb-4">
@@ -91,27 +95,40 @@ function Todo() {
 
             <ol className="list-none">
                 {list.map((eachTask, index) => (
-                    <li key={index} className="h-auto w-72 px-3 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center">
+                    <motion.li key={index} 
+                               className="h-auto w-72 px-3 mb-1 border-[#B0C7A5] border-2 rounded-md bg-[#E0E5B6] flex items-center"
+                               variants={listVariants} 
+                               initial="initial"
+                               animate="final">
                         <span className="flex-grow">{eachTask}</span>
-                        <button 
+                        <motion.button 
                             className="mx-1 px-2 text-white rounded"
                             onClick={() => moveTaskUp(index)}
+                            variants={buttonVariants}
+                            initial="initial"
+                            animate="final"
                         >
                             ⬆️
-                        </button>
-                        <button 
+                        </motion.button>
+                        <motion.button 
                             className="mx-1 px-2 text-white rounded"
                             onClick={() => moveTaskDown(index)}
+                            variants={buttonVariants}
+                            initial="initial"
+                            animate="final"
                         >
                             ⬇️
-                        </button>
-                        <button 
+                        </motion.button>
+                        <motion.button 
                             className="mx-1 px-2 text-white rounded"
                             onClick={() => deleteTask(index)}
+                            variants={buttonVariants}
+                            initial="initial"
+                            animate="final"
                         >
                             ❌
-                        </button>
-                    </li>
+                        </motion.button>
+                    </motion.li>
                 ))}
             </ol>
         </div>
